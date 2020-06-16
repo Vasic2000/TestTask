@@ -2,4 +2,8 @@
 <resources>
     <string name="app_name">Тестовое Задание</string>
     <string name="launching">Запускаюсь...</string>
+    <string name="start">Старт</string>
+    <string name="test_1">Тест 1</string>
+    <string name="test_2">Тест 2</string>
+    <string name="privace_policy">Лицензионное соглашение</string>
 </resources>
