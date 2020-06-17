@@ -1,22 +1,25 @@
 package cz.vasic2000.testtask
 
+import android.content.Context
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
+
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-        web_view.setWebViewClient(MyWebViewClient())
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        web_view.webViewClient = MyWebViewClient()
         Listeners()
     }
 
@@ -36,13 +39,12 @@ class MainActivity : AppCompatActivity() {
                 val doc: Document = Jsoup.connect("http://178.128.242.32/test").get()
                 val strUr = doc.body().text()
 
-                handler.post({
+                handler.post {
                     if (!strUr.equals(""))
                         callWebView(strUr.toString())
                     else
                         callWebView("file:///android_asset/tinder.jpg")
                 }
-                )
             }).start()
         }
 
@@ -54,20 +56,24 @@ class MainActivity : AppCompatActivity() {
                 val strUr = doc.body().text()
 
 
-                handler.post({
+                handler.post {
                     if (!strUr.equals(""))
                         callWebView(strUr.toString())
                     else
                         callWebView("file:///android_asset/tinder.jpg")
                 }
-                )
             }).start()
         }
     }
 
     private fun callWebView(url: String) {
-        web_view.getSettings().setLoadWithOverviewMode(true)
-        web_view.getSettings().setUseWideViewPort(true)
+        var settings =  web_view.settings
+        val display =
+            (getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
+        settings.useWideViewPort = true
+        settings.loadWithOverviewMode = true
+        val scale = 3549/display.width
+        web_view.setInitialScale(scale)
         web_view.loadUrl(url)
     }
 
@@ -75,12 +81,12 @@ class MainActivity : AppCompatActivity() {
         var progressStatus = 0
         val handler = Handler()
         Thread(Runnable {
-            handler.post({
+            handler.post {
                 text_privace_policy.visibility = View.INVISIBLE
                 progress_bar.visibility = View.VISIBLE
                 text_view.visibility = View.VISIBLE
                 btnStart.visibility = View.INVISIBLE
-            })
+            }
             while (progressStatus < 100) {
                 progressStatus += 1
                 try {
@@ -88,14 +94,14 @@ class MainActivity : AppCompatActivity() {
                 } catch (e: InterruptedException) {
                     e.printStackTrace()
                 }
-                handler.post({
+                handler.post {
                     progress_bar.progress = progressStatus
                     text_view.text = progressStatus.toString()
-                })
+                }
             }
-            handler.post({
+            handler.post {
                 stopProgress()
-            })
+            }
         }).start()
     }
 
